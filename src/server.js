@@ -11,7 +11,7 @@ const setupServer = () => {
   app.use(pino());
   app.use(express.json());
 
-  app.get('/api/contacts', async (req, res) => {
+  app.get('/contacts', async (req, res) => {
     try {
       const result = await Contact.find();
       res.json({
@@ -24,7 +24,7 @@ const setupServer = () => {
     }
   });
 
-  app.get('/api/contacts/:contactId', async (req, res) => {
+  app.get('/contacts/:contactId', async (req, res) => {
     const { contactId } = req.params;
     try {
       const contact = await Contact.findById(contactId);
