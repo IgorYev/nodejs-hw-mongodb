@@ -15,7 +15,7 @@ const setupServer = () => {
     try {
       const result = await Contact.find();
       res.json({
-        status: 'success',
+        status: 200,
         message: 'Successfully found contacts!',
         data: result,
       });
@@ -30,7 +30,7 @@ const setupServer = () => {
       const contact = await Contact.findById(contactId);
       if (contact) {
         res.json({
-          status: 'success',
+          status: 200,
           message: `Successfully found contact with id ${contactId}!`,
           data: contact,
         });
