@@ -6,4 +6,4 @@ const env = (key, defaultValue = undefined) => {
   return process.env[key] || defaultValue;
 };
 
-export { env };
+export default { env };
