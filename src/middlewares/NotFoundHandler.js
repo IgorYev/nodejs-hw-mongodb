@@ -1,6 +1,6 @@
 const notFoundHanler = (req, res) => {
   res.status(404).json({
-    message: 'Not Found',
+    message: 'Route not found',
   });
 };
 
