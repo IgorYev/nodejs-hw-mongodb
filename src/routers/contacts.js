@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import ctrlWrapper from '../utils/ctrlWrapper.js';
 import isValidId from '../middlewares/isValidId.js';
+import validateBody from '../middlewares/validateBody.js';
+import { contactSchema, updateContactSchema } from '../validation/contacts-schemas.js';
 
 import {
   getAllContactsController,
@@ -20,11 +22,16 @@ contactsRouter.get(
   ctrlWrapper(getContactByIdController),
 );
 
-contactsRouter.post('/contacts', createContactController);
+contactsRouter.post(
+  '/contacts',
+  validateBody(contactSchema),
+  ctrlWrapper(createContactController)
+);
 
 contactsRouter.patch(
   '/contacts/:contactId',
   isValidId,
+  validateBody(updateContactSchema),
   ctrlWrapper(updateContactController),
 );
 

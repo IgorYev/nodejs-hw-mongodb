@@ -7,13 +7,32 @@ import {
   deleteContactById,
 } from '../services/services.js';
 
-export const getAllContactsController = async (req, res) => {
-  const data = await getContacts();
-  res.json({
-    status: 200,
-    data,
-    message: 'Successfully found contacts',
-  });
+export const getAllContactsController = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const perPage = parseInt(req.query.perPage) || 10;
+  const sortBy = req.query.sortBy || 'name';
+  const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
+
+  try {
+    const { contacts, totalItems } = await getContacts(page, perPage, sortBy, sortOrder);
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    res.json({
+      status: 200,
+      message: 'Successfully found contacts',
+      data: {
+        data: contacts,
+        page: page,
+        perPage: perPage,
+        totalItems: totalItems,
+        totalPages: totalPages,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getContactByIdController = async (req, res, next) => {

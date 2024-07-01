@@ -1,6 +1,15 @@
 import { Contact } from '../db/models/Contact.js';
 
-export const getContacts = () => Contact.find();
+export const getContacts = async (page, perPage, sortBy, sortOrder) => {
+  const skip = (page - 1) * perPage;
+  const contacts = await Contact.find()
+    .sort({ [sortBy]: sortOrder })
+    .skip(skip)
+    .limit(perPage);
+  const totalItems = await Contact.countDocuments();
+  
+  return { contacts, totalItems };
+};
 
 export const getContactById = (id) => Contact.findById(id);
 
@@ -39,23 +48,3 @@ export const deleteContactById = async (id) => {
   const deletedContact = await Contact.findByIdAndDelete(id);
   return deletedContact;
 };
-
-// export const upsertMovie = async (filter, data, options = {}) => {
-//   const result = await Contact.findOneAndUpdate(filter, data, {
-//     new: true,
-//     includeResultMetadata: true,
-//     ...options,
-//   });
-
-//   if (!result || !result.value) return null;
-
-// const isNew = data && data.lastErrorObject && data.lastErrorObject.upserted;
-//   const isNew = Boolean(result?.lastErrorObject?.upserted);
-
-//   return {
-//     data: result.value,
-//     isNew,
-//   };
-// };
-
-// export const deleteMovie = (filter) => Contact.findOneAndDelete(filter);
