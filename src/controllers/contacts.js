@@ -14,7 +14,7 @@ export const getAllContactsController = async (req, res, next) => {
   const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
 
   try {
-    const { contacts, totalItems } = await getContacts(page, perPage, sortBy, sortOrder);
+    const { contacts, totalItems } = await getContacts(page, perPage, sortBy, sortOrder, req.user._id);
     const totalPages = Math.ceil(totalItems / perPage);
 
     res.json({
@@ -39,7 +39,7 @@ export const getContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
 
   try {
-    const data = await getContactById(contactId);
+    const data = await getContactById(contactId, req.user._id);
 
     if (!data) {
       return next(
@@ -71,6 +71,7 @@ export const createContactController = async (req, res, next) => {
       email,
       isFavourite,
       contactType,
+      userId: req.user._id,
     });
 
     res.status(201).json({
@@ -87,7 +88,7 @@ export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
-  const updatedContact = await updateContactById(contactId, {
+  const updatedContact = await updateContactById(contactId, req.user._id, {
     name,
     phoneNumber,
     email,
@@ -109,7 +110,7 @@ export const updateContactController = async (req, res) => {
 export const deleteContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
 
-  const deletedContact = await deleteContactById(contactId);
+  const deletedContact = await deleteContactById(contactId, req.user._id);
 
   if (!deletedContact) {
     return next(createHttpError(404, `Contact with id=${contactId} not found`));

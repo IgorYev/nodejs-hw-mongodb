@@ -9,6 +9,7 @@ const contactSchema = new Schema(
     phoneNumber: {
       type: String,
       required: true,
+      match: /^[0-9+-]+$/,
     },
     email: {
       type: String,
@@ -22,6 +23,11 @@ const contactSchema = new Schema(
       type: String,
       enum: ['work', 'home', 'personal'],
       default: 'personal',
+      required: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
   },
