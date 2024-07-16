@@ -28,8 +28,11 @@ export const sendResetPasswordEmail = async (to, link) => {
   };
 
   try {
+    console.log(`Sending email to ${to} with link: ${link}`);
     await transporter.sendMail(mailOptions);
+    console.log(`Email sent successfully to ${to}`);
   } catch (error) {
+    console.error(`Failed to send email to ${to}:`, error);
     throw createHttpError(500, 'Failed to send the email, please try again later.');
   }
 };

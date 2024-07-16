@@ -64,3 +64,7 @@ export const logoutUser = async (refreshToken) => {
 
   await Session.deleteOne({ _id: session._id });
 };
+
+export const invalidateUserSessions = async (userId) => {
+  await Session.deleteMany({ userId });
+};

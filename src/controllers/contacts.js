@@ -1,11 +1,6 @@
 import createHttpError from 'http-errors';
-import {
-  getContacts,
-  getContactById,
-  addContact,
-  updateContactById,
-  deleteContactById,
-} from '../services/services.js';
+import cloudinary from '../utils/cloudinary.js';
+import { addContact, updateContactById, getContacts, getContactById, deleteContactById } from '../services/services.js';
 
 export const getAllContactsController = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -65,6 +60,12 @@ export const createContactController = async (req, res, next) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
   try {
+    let photoUrl;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      photoUrl = result.secure_url;
+    }
+
     const newContact = await addContact({
       name,
       phoneNumber,
@@ -72,6 +73,7 @@ export const createContactController = async (req, res, next) => {
       isFavourite,
       contactType,
       userId: req.user._id,
+      photo: photoUrl,
     });
 
     res.status(201).json({
@@ -84,27 +86,38 @@ export const createContactController = async (req, res, next) => {
   }
 };
 
-export const updateContactController = async (req, res) => {
+export const updateContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
-  const updatedContact = await updateContactById(contactId, req.user._id, {
-    name,
-    phoneNumber,
-    email,
-    isFavourite,
-    contactType,
-  });
+  try {
+    let photoUrl;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      photoUrl = result.secure_url;
+    }
 
-  if (!updatedContact) {
-    throw createHttpError(404, `Contact with id=${contactId} not found`);
+    const updatedContact = await updateContactById(contactId, req.user._id, {
+      name,
+      phoneNumber,
+      email,
+      isFavourite,
+      contactType,
+      photo: photoUrl,
+    });
+
+    if (!updatedContact) {
+      throw createHttpError(404, `Contact with id=${contactId} not found`);
+    }
+
+    res.json({
+      status: 200,
+      data: updatedContact,
+      message: 'Successfully patched a contact!',
+    });
+  } catch (error) {
+    next(error);
   }
-
-  res.json({
-    status: 200,
-    data: updatedContact,
-    message: 'Successfully patched a contact!',
-  });
 };
 
 export const deleteContactByIdController = async (req, res, next) => {
