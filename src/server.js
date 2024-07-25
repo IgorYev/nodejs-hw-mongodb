@@ -9,6 +9,7 @@ import authRouter from './routers/auth.js';
 
 import notFoundHandler from './middlewares/NotFoundHandler.js';
 import errorHandler from './middlewares/errorHandler.js';
+import swaggerDocs from './middlewares/swaggerDocs.js';
 
 const setupServer = () => {
   const app = express();
@@ -17,6 +18,7 @@ const setupServer = () => {
   app.use(pino());
   app.use(express.json());
   app.use(cookieParser());
+  app.use('/api-docs', swaggerDocs());
 
   
   app.use('/contacts', contactsRouter);

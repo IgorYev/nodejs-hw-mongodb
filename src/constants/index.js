@@ -12,3 +12,4 @@ export const CLOUDINARY = {
   CLOUD_API_KEY: 'CLOUD_API_KEY',
   CLOUD_API_SECRET: 'CLOUD_API_SECRET',
 };
+export const SWAGGER_PATH = path.resolve('docs', 'swagger.json');
